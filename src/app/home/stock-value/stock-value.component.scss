@@ -1,0 +1,69 @@
+.stock-table{
+    margin: auto;
+    width: 80%;
+
+    .table-head-label{
+      font-size: 18px;
+    }
+}
+
+.table-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 16px;
+  position: static;
+  height: 54px;
+  background: #ffffff;
+  border-radius: 8px 8px 0px 0px;
+}
+
+
+.table-footer {
+  border-radius: 0 0 8px 8px;
+}
+
+
+.mat-header-cell {
+  background: #afaeae;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 10px;
+  color: #221f1f;
+}
+
+
+
+.mat-cell {
+  font-size: 12px;
+  line-height: 10x;
+  color: #221f1f;
+}
+
+:host ::ng-deep.mat-paginator .mat-paginator-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .mat-paginator-page-size {
+    margin-left: 12px;
+  }
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.wrap_table_stock {
+  max-height: 33.75rem;
+  display: flex;
+  justify-content: center;
+}
