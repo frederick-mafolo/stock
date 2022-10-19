@@ -6,6 +6,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Stock } from '../../shared/stock.model';
+import exportFromJSON from 'export-from-json'
 
 @Component({
   selector: 'app-stock-value',
@@ -22,6 +23,8 @@ export class StockValueComponent
   pageSizeOptions: number[] = [5, 10, 20, 30, 50, 100, 300];
   dataSource: any = new MatTableDataSource<Stock>([]);
   showTable: boolean = false;
+
+
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatTable) table!: MatTable<any>;
@@ -49,4 +52,12 @@ export class StockValueComponent
     }
   }
 
+  exportJson(){
+
+    const data = this.stock
+    const fileName = 'stock'
+    const exportType = 'json'
+
+    exportFromJSON({ data, fileName, exportType })
+  }
 }

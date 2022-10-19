@@ -1,6 +1,6 @@
 
 
-<div class="container">
+<div>
 <div class="stock-table">
     <div class="table-head">
         <span class="table-head-label">
@@ -21,7 +21,7 @@
     </form>
 
     <div class="wrap_table_stock">
-        <!-- *ngIf="size > 0"  -->
+      
         <table  mat-table class="full-width-table" [dataSource]="dataSource"
             matSort matSortActive matSortDisableClear
             matSortDirection="desc" aria-label="Elements">
@@ -59,10 +59,14 @@
                 true"></tr>
             <tr mat-row *matRowDef="let row; let i= index; columns:
                 displayedColumns;" (click)="getRowData(row,i)"
-                [style.background]="clickedRow && selectedindex == i ? '#bff0f0'
-                : ''"></tr>
+                [style.background]="clickedRow && selectedindex == i ? '#bff0f0': ''"></tr>
 
         </table>
+   
+        <div *ngIf="showNoresults" class="no-result">    
+            <p> No results found</p>
+            <img class="nofound" src="assets/no-results.png" alt="Equity Bank Logo">
+        </div>
     </div>
     <div class="paginator-container">
         <mat-paginator class="table-footer" #paginator [pageSize]="pageSize"
@@ -72,12 +76,7 @@
 
 
 </div>
-<div *ngIf="!showTable" class="no-result">
-    <!-- <img src="../../../../assets/icons/icon-no-results.svg" alt="no results found" /> -->
-    <a href="https://www.flaticon.com/free-icons/no-results" title="no results icons">No results found</a>
-    <!-- <p> No results found</p> -->
 
-</div>
     
 <app-stock-value [stock]="stock" ></app-stock-value>
 

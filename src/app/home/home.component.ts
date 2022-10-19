@@ -3,7 +3,6 @@ import {
   Component,
   OnInit,
   ViewChild,
-  AfterContentInit,
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -27,22 +26,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
   pageSizeOptions: number[] = [5, 10, 20, 30, 50, 100, 300];
   totalTicketsCount!: number;
   dataSource: any = new MatTableDataSource<Stock>();
- 
+
   stock!: {};
   clickedRow = false;
   selectedindex!: string;
   oldValue!: string;
   stockArray: Array<any> = [];
   showTable: boolean = false;
+  showNoresults:boolean =false;
   stockList$!: Observable<any>;
   private subjectKeyUp = new Subject<any>();
-  size:number=0;
+  size: number = 0;
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatTable) table!: MatTable<any>;
 
-  constructor(private stockService: StockService) {}
+  constructor(
+    private stockService: StockService
+  ) {}
 
   ngOnInit(): void {
     this.stockList$ = this.stockService.getStocks();
@@ -55,23 +57,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.stockService.getList().subscribe(
+      (val) => {
+        this.size = Object.keys(val).length;
 
-    this.stockService.getList().subscribe((val) => {
-
-
-      this.size = Object.keys(val).length;
-
-      this.dataSource.data = val as any;
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
-      this.stockService.updateStock(this.dataSource.data);
-      this.showTable = true;
-    },
-    (error) => {
-      console.log(error)
+        this.dataSource.data = val as any;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        this.stockService.updateStock(this.dataSource.data);
+        this.showTable = true;
+      },
+      (error) => {
+        console.log(error);
         this.showTable = false;
         return;
-    });
+      }
+    );
 
     this.dataSource.sort = this.sort;
   }
@@ -82,31 +83,36 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getStock(value: string) {
-    this.stockService.searchItem(value).subscribe((res) => {
+    this.stockService.searchItem(value).subscribe(
+      (res) => {
+        this.size = Object.keys(res).length;
+
+        if (this.size === 0) {
+          this.stock = {};
+          this.showNoresults = true;
+        }
+        else{
+          this.showNoresults = false;
+        }
 
 
-      this.size = Object.keys(res).length;
+        this.dataSource.data = res as any;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
 
-      if(this.size===0)
-      this.stock ={}
+        this.stockService.updateStock(this.dataSource.data);
 
-      this.dataSource.data = res as any;
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
-
-      this.stockService.updateStock(this.dataSource.data);
-
-      this.showTable = true;
-    },
-    (error) => {
-      console.log(error)
+        this.showTable = true;
+      },
+      (error) => {
+        console.log(error);
         this.showTable = false;
         return;
-    });
+      }
+    );
   }
 
   getRowData(row: any, selectedIndex: string) {
-
     this.selectedindex = selectedIndex;
 
     if (this.stockArray.includes(row.id)) {
@@ -128,23 +134,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     if (this.oldValue == row.id) {
-      console.log("test")
-      this.oldValue=''
-      this.stock ={}
+      this.oldValue = '';
+      this.stock = {};
+
       return;
-    } else if(this.oldValue == row.id && JSON.stringify(this.stock) === '{}')
-    this.getStockById(row.id,row.stock);
-    else if (!this.oldValue && row.id) this.getStockById(row.id,row.stock);
-    else this.getStockById(row.id,row.stock);
+    } else if (this.oldValue == row.id && JSON.stringify(this.stock) === '{}')
+      this.getStockById(row.id, row.stock);
+    else if (!this.oldValue && row.id) this.getStockById(row.id, row.stock);
+    else this.getStockById(row.id, row.stock);
   }
 
-  getStockById(Id: any,stock:any) {
-    this.stockService.getItem(Id).subscribe((res) => {
-      console.log(res)
-      this.stock = (res as any).map((obj:any)=> { return Object.assign(obj,{stock:stock})})
-  
-    },(error)=>{
-      console.log(error)
-    });
+  getStockById(Id: any, stock: any) {
+    this.stockService.getItem(Id).subscribe(
+      (res) => {
+        console.log(res);
+        this.stock = (res as any).map((obj: any) => {
+          return Object.assign(obj, { stock: stock });
+        });
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 }
