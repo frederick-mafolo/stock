@@ -1,19 +1,11 @@
 import {
-  SimpleChanges,
   Component,
-  Input,
-  OnInit,
-  ViewChild,
-  OnChanges,
-  AfterViewChecked,
-  ChangeDetectorRef,
-  AfterViewInit
+  Input, OnChanges, OnInit, SimpleChanges, ViewChild
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Stock } from '../../shared/stock.model';
-import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-stock-value',
@@ -21,8 +13,7 @@ import { ThrowStmt } from '@angular/compiler';
   styleUrls: ['./stock-value.component.scss'],
 })
 export class StockValueComponent
-  implements OnInit, OnChanges, AfterViewChecked,AfterViewInit
-{
+  implements OnInit, OnChanges  {
   displayedColumns = ['stock', 'date', 'value'];
 
   @Input() stock!: any;
@@ -32,40 +23,30 @@ export class StockValueComponent
   dataSource: any = new MatTableDataSource<Stock>([]);
   showTable: boolean = false;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatTable) table!: MatTable<any>;
 
   stockValueTitle!: string;
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor() { }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges) {
 
- 
-      if (JSON.stringify(changes.stock?.currentValue) !== '{}' && changes.stock?.currentValue!==undefined) {
-  
-        this.dataSource = new MatTableDataSource<Stock>(this.stock);
-        this.stockValueTitle = this.stock[0]?.stock;
-     
+    if (JSON.stringify(changes.stock?.currentValue) !== '{}' && changes.stock?.currentValue !== undefined) {
+      this.dataSource = new MatTableDataSource<Stock>(this.stock);
+      this.stockValueTitle = this.stock[0]?.stock;
+
+      this.paginator.initialized.subscribe(() => {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.showTable = true;
-      }
-        else
-        this.showTable = false;
+      });
 
+    } else {
+      this.showTable = false;
+    }
   }
 
-  ngAfterViewInit():void{
-
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-
-  }
-
-  ngAfterViewChecked() {
-    this.cdRef.detectChanges();
-  }
 }

@@ -8,6 +8,7 @@ import {
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+
 import { Stock } from '../shared/stock.model';
 
 import { Observable, Subject } from 'rxjs';
@@ -54,16 +55,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    console.log(this.size)
+
     this.stockService.getList().subscribe((val) => {
-      this.showTable = true;
+
 
       this.size = Object.keys(val).length;
-      console.log(this.size)
+
       this.dataSource.data = val as any;
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
       this.stockService.updateStock(this.dataSource.data);
+      this.showTable = true;
     },
     (error) => {
       console.log(error)
@@ -81,14 +83,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   getStock(value: string) {
     this.stockService.searchItem(value).subscribe((res) => {
-      this.showTable = true;
+
 
       this.size = Object.keys(res).length;
-      console.log(this.size)
+
+      if(this.size===0)
+      this.stock ={}
+
       this.dataSource.data = res as any;
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
+
       this.stockService.updateStock(this.dataSource.data);
+
+      this.showTable = true;
     },
     (error) => {
       console.log(error)
@@ -98,7 +106,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getRowData(row: any, selectedIndex: string) {
-    console.log(row);
 
     this.selectedindex = selectedIndex;
 
@@ -121,16 +128,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     if (this.oldValue == row.id) {
+      console.log("test")
+      this.oldValue=''
       this.stock ={}
       return;
-    } else if (!this.oldValue && row.id) this.getStockById(row.id,row.stock);
+    } else if(this.oldValue == row.id && JSON.stringify(this.stock) === '{}')
+    this.getStockById(row.id,row.stock);
+    else if (!this.oldValue && row.id) this.getStockById(row.id,row.stock);
     else this.getStockById(row.id,row.stock);
   }
 
   getStockById(Id: any,stock:any) {
     this.stockService.getItem(Id).subscribe((res) => {
-      
-      this.stock = (res as any).map((obj:any,i:any)=> { return Object.assign(obj,{stock:stock})})
+      console.log(res)
+      this.stock = (res as any).map((obj:any)=> { return Object.assign(obj,{stock:stock})})
   
     },(error)=>{
       console.log(error)

@@ -5,7 +5,7 @@ import {
   HttpErrorResponse,
 } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { retry, catchError } from 'rxjs/operators';
+import { retry, catchError, map } from 'rxjs/operators';
 import { Stock, StockValue } from './stock.model';
 
 // API path
@@ -32,16 +32,30 @@ export class StockService {
       console.error(
         `Backend returned code ${error.status}, ` + `body was: ${error.error}`
       );
-      console.log(error.error)
+      console.log(error.error);
     }
     return throwError('Something bad happened; please try again later.');
   }
 
   // Get single Stock data by ID
-  getItem(id: string): Observable<StockValue> {
-    return this.http
-      .get<StockValue>(`${BASE_URL}/stock-values?stock_id_like=${id}`)
-      .pipe(retry(2), catchError(this.handleError));
+  getItem(id: number) {
+    return this.http.get(`${BASE_URL}/stock-values`)
+    .pipe(
+      map((data) => {
+
+        var selectedStockId;
+        
+        return selectedStockId = (data as any[]).filter(res=> {
+        
+          if(res.stock_id === id)
+          return res;
+
+        });
+
+    
+      }),
+      catchError(this.handleError)
+    );
   }
 
   searchItem(value: string): Observable<Stock> {

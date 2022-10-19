@@ -1,5 +1,6 @@
 .stock-table{
     margin: auto;
+    padding-bottom: 50px;
     width: 80%;
 
     .table-head-label{
@@ -58,9 +59,7 @@
   flex: 1 1 auto;
 }
 
-.clickable {
-  cursor: pointer;
-}
+
 
 .wrap_table_stock {
   max-height: 33.75rem;
